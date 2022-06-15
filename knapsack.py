@@ -1,11 +1,9 @@
 import requests
-
-result = True
-
-categorien = []
+import asyncio
+import aiohttp
 
 
-def get_product_info(categorie):
+def get_product_pids(categorie):
 
     req = requests.get(f"https://www.ah.nl/zoeken/api/products/search?taxonomySlug={categorie}&size=1000")
 
@@ -43,7 +41,29 @@ def get_product_info(categorie):
                 if products[j]['id'] not in product_ids:
                     product_ids.append(products[j]['id'])
 
-    return product_ids
+    return product_ids, categorie
+
+
+async def get_product_info(pid):
+
+    async with aiohttp.ClientSession() as session:
+        req = await session.get(f'https://www.ah.nl/zoeken/api/products/product?webshopId={pid}')
+
+        response = await req.json()
+
+        product_info = {}
+
+        for p in range(len(response['card']['meta']['nutritions'][0]['nutrients'])):
+            product_info[response['card']['meta']['nutritions'][0]['nutrients'][p]['name']] = response['card']['meta']['nutritions'][0]['nutrients'][p]['value']
+
+        product_info['product_name'] = response['card']['products'][0]['title']
+        product_info['product_link'] = response['card']['products'][0]['link']
+        product_info['product_price'] = response['card']['products'][0]['price']['now']
+        product_info['product_weight'] = response['card']['products'][0]['price']['unitSize']
+
+
+async def multiple_tasks(tasks):
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 def get_data():
@@ -54,13 +74,20 @@ def get_data():
 
     product_pids = []
     for cat in categories:
-        pids = get_product_info(cat)
+        pids = get_product_pids(cat)
 
         for j in pids:
             product_pids.append(j)
 
-    print(len(product_pids))
+    tasks = []
 
+    for i in product_pids:
+        tasks.append(get_product_info(i))
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    loop.run_until_complete(multiple_tasks(tasks))
 
 
 if __name__ == "__main__":
