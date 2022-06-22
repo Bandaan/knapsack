@@ -1,11 +1,8 @@
 import requests
 import asyncio
 import aiohttp
-from database import Database as dbRequest
-import setup as initialize
-import json
 import time
-import os
+from database import Database as dbRequest
 
 
 class Product:
@@ -14,13 +11,21 @@ class Product:
                             "snoep-koek-chips-en-chocolade", "tussendoortjes", "frisdrank-sappen-koffie-thee", "wijn-en-bubbels", "bier-en-aperitieven", "pasta-rijst-en-wereldkeuken", "soepen-sauzen-kruiden-olie",
                             "sport-en-dieetvoeding", "diepvries", "drogisterij", "baby-en-kind", "huishouden", "huisdier", "koken-tafelen-vrije-tijd"]
 
+        #self.categories = ["sport-en-dieetvoeding", "diepvries"]
+        self.database = dbRequest
         self.products = []
         self.product_pids = []
         self.tasks = []
         self.error_pids = []
-        self.test = []
 
     async def main(self):
+        self.database().setup(self.categories)
+        await self.get_all_product_pids()
+        await self.start_tasks()
+        await self.start_error_tasks()
+        await self.database().push_products(self.products)
+
+    async def get_all_product_pids(self):
 
         for cat in self.categories:
             pids = await self.get_product_pids(cat)
@@ -30,17 +35,18 @@ class Product:
 
         [dict(t) for t in {tuple(d.items()) for d in self.product_pids}]
 
-        index = 0
+    async def start_tasks(self):
         for i in self.product_pids:
             self.tasks.append(asyncio.create_task(self.get_product_info(i['pid'], i['categorie'])))
-            index += 1
 
         await asyncio.gather(*self.tasks)
 
-        await db.commit()
+    async def start_error_tasks(self):
+        self.tasks = []
+        for i in self.error_pids:
+            self.tasks.append(asyncio.create_task(self.get_product_info(i['pid'], i['categorie'])))
 
-    async def setup(self):
-
+        await asyncio.gather(*self.tasks)
 
     async def get_product_pids(self, categorie):
 
@@ -95,12 +101,12 @@ class Product:
                 error = 0
 
                 while True:
+                    if error > 2:
+                        self.error_pids.append({'pid': pid, 'categorie': categorie})
+                        return
                     try:
                         result = await session.get(f'https://www.ah.nl/zoeken/api/products/product?webshopId={pid}')
                     except Exception:
-                        if error > 2:
-                            self.error_pids.append(pid)
-                            return
                         error += 1
                         continue
                     else:
@@ -140,6 +146,7 @@ class Product:
                     product_info['product_weight'] = 0
 
             product_info['product_pid'] = pid
+            product_info['categorie'] = categorie
 
             if not product_info.get("Energie"):
                 product_info["Energie"] = 0
@@ -154,8 +161,17 @@ class Product:
             if not product_info.get("Voedingsvezel"):
                 product_info["Voedingsvezel"] = 0
 
+            if "x" in str(product_info.get("product_weight")):
+                if "kg" in str(product_info.get("product_weight")):
+                    aantal = int(str(product_info.get("product_weight")).split("x")[0].strip())
+                    gewicht = "".join([ch for ch in str(product_info.get("product_weight")).split("x")[1] if ch.isdigit()])
+                    product_info["product_weight"] = f"{aantal * gewicht * 1000} g"
+                elif "g" in str(product_info.get("product_weight")):
+                    aantal = int(str(product_info.get("product_weight")).split("x")[0].strip())
+                    gewicht = "".join([ch for ch in str(product_info.get("product_weight")).split("x")[1] if ch.isdigit()])
+                    product_info["product_weight"] = f"{int(aantal) * int(gewicht)} g"
+
             if "kg" in str(product_info.get("product_weight")):
-                print(product_info["product_pid"])
                 s_nums = "".join([ch for ch in str(product_info.get("product_weight")) if ch.isdigit()])
                 product_info["product_weight"] = f"{int(s_nums) * 1000} g"
 
@@ -171,17 +187,13 @@ class Product:
                     s_nums = "".join([ch for ch in str(gewicht) if ch.isdigit()])
                     product_info["product_weight"] = f"{int(s_nums)} g"
 
-            await db.insert_table(product_info)
-            await db.commit()
-
+            self.products.append(product_info)
             return
 
         except asyncio.TimeoutError:
-            self.error_pids.append(pid)
-            print( {"results": f"timeout error on {pid}"})
+            self.error_pids.append({'pid': pid, 'categorie': categorie})
+            return
 
 
 if __name__ == "__main__":
-    db = database.Database()
-    db.main()
     asyncio.get_event_loop().run_until_complete(Product().main())
