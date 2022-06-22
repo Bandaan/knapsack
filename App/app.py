@@ -9,6 +9,7 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/get-products", methods=['GET'])
 def begin():
 
