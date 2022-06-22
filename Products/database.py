@@ -75,4 +75,5 @@ class Database:
 
     async def commit(self):
         self.conn.commit()
+        print('poep')
 
