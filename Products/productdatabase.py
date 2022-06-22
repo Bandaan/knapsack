@@ -22,7 +22,26 @@ class Product:
         self.database().setup(self.categories)
         await self.get_all_product_pids()
         await self.start_tasks()
-        await self.start_error_tasks()
+        #await self.start_error_tasks()
+
+        res_list = []
+        for i in range(len(self.products)):
+            if self.products[i]['product_pid'] not in self.products[i + 1:]:
+                res_list.append(self.products[i])
+            else:
+                print('dubbel')
+
+        self.products = res_list
+
+        res_list = []
+        for i in range(len(self.products)):
+            if self.products[i] not in self.products[i + 1:]:
+                res_list.append(self.products[i])
+            else:
+                print('dubbel')
+
+        self.products = res_list
+
         await self.database().push_products(self.products)
 
     async def get_all_product_pids(self):
@@ -32,6 +51,13 @@ class Product:
 
             for j in pids:
                 self.product_pids.append(j)
+
+        res_list = []
+        for i in range(len(self.products)):
+            if self.products[i] not in self.products[i + 1:]:
+                res_list.append(self.products[i])
+
+        self.products = res_list
 
         [dict(t) for t in {tuple(d.items()) for d in self.product_pids}]
 
@@ -113,7 +139,7 @@ class Product:
                         if result.status == 200:
                             break
                         else:
-                            print(await result.json(content_type=None))
+                            #print(await result.json(content_type=None))
                             return
 
                 response = await result.json(content_type=None)

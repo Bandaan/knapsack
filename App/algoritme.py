@@ -1,4 +1,4 @@
-import Algoritme.database as db
+import Products.database as db
 
 
 class Knapsack:
@@ -7,7 +7,7 @@ class Knapsack:
         self.products = ''
 
     def get_products(self):
-        self.products = self.database.first10_products()
+        self.products = self.database.get_products()
 
         product_info = []
 
@@ -59,9 +59,10 @@ class Knapsack:
 
     def main(self):
         product_info = self.get_products()
+        print(product_info)
 
         return_list = []
-        for i in self.dynamic_fruit(product_info, 3000):
+        for i in self.dynamic_fruit(product_info, 200):
             return_list.append(product_info[i])
 
         return return_list

@@ -1,7 +1,7 @@
 import psycopg2
 import time
 import os
-import setup as initialize
+import Products.setup as initialize
 
 
 class Database:
@@ -34,8 +34,18 @@ class Database:
     async def push_products(self, products):
 
         for product in products:
-            await self.insert_product(product)
-            await self.insert_categorie(product)
+            try:
+                await self.insert_product(product)
+            except Exception:
+                pass
+
+            try:
+                await self.insert_categorie(product)
+            except Exception:
+                pass
+
+
+            self.conn.commit()
 
         self.conn.commit()
 
@@ -45,6 +55,7 @@ class Database:
         insert_value = (product_info['product_pid'], product_info['product_name'], product_info['product_link'], product_info['product_image'], product_info['product_price'], product_info['product_weight'], product_info['Energie'], product_info['Vet'], product_info['Koolhydraten'], product_info['Eiwitten'], product_info['Zout'], product_info['Voedingsvezel'],)
 
         self.cur.execute(insert_script, insert_value)
+        self.conn.commit()
 
     async def insert_categorie(self, product_info):
 
@@ -56,6 +67,7 @@ class Database:
 
         # Product in database zetten
         self.cur.execute(insert_script, insert_value)
+        self.conn.commit()
 
     def get_products(self):
         self.cur.execute("select * from product limit 100;")
