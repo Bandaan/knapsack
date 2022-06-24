@@ -57,16 +57,12 @@ class Knapsack:
 
         return index
 
-    def main(self):
+    def main(self, massa, categorie, dieet):
         product_info = self.get_products()
-        print(product_info)
+
 
         return_list = []
-        for i in self.dynamic_fruit(product_info, 200):
+        for i in self.dynamic_fruit(product_info, int(massa)):
             return_list.append(product_info[i])
 
         return return_list
-
-
-if __name__ == '__main__':
-    Knapsack().main()

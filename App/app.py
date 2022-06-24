@@ -12,7 +12,7 @@ CORS(app)
 
 @app.route("/get-products/<massa>/<categorie>/<dieet>", methods=['GET'])
 def begin(massa, categorie, dieet):
-    return jsonify(calculate.Knapsack().main())
+    return jsonify(calculate.Knapsack().main(massa, categorie, dieet))
 
 
 if __name__ == "__main__":
