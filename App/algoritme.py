@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+@Author: Daan van Dijk
+@Date: 29/06/2022
+@Links: https://github.com/Bandaan/knapsack
+"""
+
 import Products.database as db
 
 
@@ -20,6 +27,7 @@ class Knapsack:
     def dynamic_fruit(self, product_info, capacity):
 
         value, weight = [], []
+        capacity = capacity // 10
 
         for i in product_info:
             value.append(float(i['price']) * 100)
@@ -60,9 +68,12 @@ class Knapsack:
     def main(self, massa, categorie, dieet):
         product_info = self.get_products()
 
+        massa = int(massa)
 
         return_list = []
-        for i in self.dynamic_fruit(product_info, int(massa)):
+        for i in self.dynamic_fruit(product_info, massa):
+            print(i)
             return_list.append(product_info[i])
 
+        print(return_list)
         return return_list

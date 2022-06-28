@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Responsive Registration Form | Daan van Dijk</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
         <script src="script.js" defer></script>
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -13,19 +15,39 @@
 
         <form class="form" id="myForm" action="#">
             <div class="user-details">
+
                 <div class="input-box">
                     <span class="details">Hoeveel gram wil je kopen?</span>
                     <input id="gram" type="text" placeholder="Aantal gram" required>
                 </div>
+
                 <div class="input-box">
-                    <span class="details">Wat voor eten heb je zin in?</span>
-                    <input id="categorie" type="text" placeholder="Enter your username" required>
+                    <span class="details">Uit welke categorie?</span>
+
+                    <div class="select-btn">
+                        <span>Selecteer Categorie</span>
+                            <i class="uil uil-angle-down"></i>
+                    </div>
+                    <div class="content">
+                    <ul class="options"></ul>
+                    </div>
+
                 </div>
+
                 <div class="input-box">
-                    <span class="details">Wat voor een dieet volg je?</span>
-                    <input id="dieet" type="text" placeholder="Enter your email" required>
+                    <span class="details">Dieet keuze?</span>
+
+                    <div class="select-btn" id="dieet">
+                        <span>Selecteer Dieet</span>
+                            <i class="uil uil-angle-down"></i>
+                    </div>
+                    <div class="content">
+                    <ul class="options"></ul>
+                    </div>
                 </div>
+
             </div>
+
                 <button type="submit" value="Bereken producten">Bereken producten</button>
         </form>
     </div>
