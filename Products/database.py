@@ -28,7 +28,7 @@ class Database:
         except Exception:
             self.database_host = "localhost"
             self.database_name = "supermarkt"
-            self.database_password = "AjaxDaan23@"
+            self.database_password = ""
             self.database_port = "5432"
 
         try:
