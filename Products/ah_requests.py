@@ -73,7 +73,7 @@ async def get_product_pids(categorie):
 
 
 # Functie om product informatie van een pid te krijgen
-async def get_product_info(pid, categorie, proxy, database):
+async def get_product_info(pid, categorie, proxy):
 
     # Dictionary aanmaken
     error_list = {}
@@ -110,7 +110,6 @@ async def get_product_info(pid, categorie, proxy, database):
                     error_list = {'pid': pid, 'categorie': categorie}
                     return product_info, error_list
 
-                proxies = None
                 # Request met juiste pid naar AH maken
                 try:
                     result = await session.get(f'https://www.ah.nl/zoeken/api/products/product?webshopId={pid}', proxy=proxies)
@@ -215,6 +214,4 @@ async def get_product_info(pid, categorie, proxy, database):
         return product_info, error_list
 
     # Product informatie en eventuele error teruggeven
-    await database.insert_product(product_info)
-    await database.insert_categorie(product_info)
     return product_info, error_list

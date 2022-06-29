@@ -31,7 +31,7 @@ class Product:
     # Main functie die alles bestuurt
     async def main(self):
         # Voor elke categorie en tabel maken
-        #self.database.setup(self.categories)
+        self.database.setup(self.categories)
 
         # Alle product pids van de AH aanvragen
         await self.get_all_product_pids()
@@ -40,9 +40,10 @@ class Product:
         await self.start_tasks()
 
         # Voor elke error product pid de volledige product informatie krijgen
-        #await self.start_error_tasks()
+        await self.start_error_tasks()
 
-        #await self.insert_in_database()
+        # Producten in database zetten
+        await self.insert_in_database()
 
     # Functie om alle product pids te krijgen
     async def get_all_product_pids(self):
@@ -83,8 +84,7 @@ class Product:
                     proxy = 'None'
 
             # Proxy toevoegen aan task zodat je geen rate limit krijgt
-            self.tasks.append(asyncio.create_task(get_product_info(i['pid'], i['categorie'], proxy, self.database)))
-            print(index)
+            self.tasks.append(asyncio.create_task(get_product_info(i['pid'], i['categorie'], proxy)))
             await asyncio.sleep(1)
             index += 1
 
@@ -99,8 +99,7 @@ class Product:
                 self.products.append(i.result()[0])
             else:
                 # Als product pid een error heeft dan aan error_tasks toevoegen
-                pass
-                #self.error_tasks.append(asyncio.create_task(get_product_info(i.result()[1]['pid'], i.result()[1]['categorie'])))
+                self.error_tasks.append(asyncio.create_task(get_product_info(i.result()[1]['pid'], i.result()[1]['categorie'])))
 
     # Functie om alle producten die een error gaven nog een keer te starten
     async def start_error_tasks(self):
