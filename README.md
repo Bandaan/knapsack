@@ -18,21 +18,21 @@
 - algoritme.py - Het algoritme waarmee de ideale producten worden berekend
 - app.py - De API waarmee de frontend en het algoritme worden samengevoegd
 
-###Products
+### Products
 - ah_requests.py - Requesten die naar de AH api en waar product informatie wordt terugegeven
 - database.py - Database die alles regelt.
 - productdatabase.py - Script die alle producten in de database zet
 - proxies.txt - opslag van proxies
 - setup.py - file om alles te initialiseren
 
-###Rapportage
+### Rapportage
 - De betere boodschap.png - Poster van het project
 - Project samenvatting.docx - Project samenvatting
 
-###Test
+### Test
 - test_algoritme.py - unittest om algoritme te testen
 
-###Frontend
+### Frontend
 - index.html - HTML van frontend
 - script.js - Javascript file waar functies van de html staan
 - style.css - Vormgeving van frontend
