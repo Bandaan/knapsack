@@ -25,12 +25,11 @@ class Database:
                 self.database_password = str(data["database_password"])
                 self.database_port = int(data["database_port"])
 
-        except Exception as e:
-            # Error terug geven en proces stoppen
-            print(f"Error reading config file {e}")
-
-            # Het programma stoppen
-            os._exit(0)
+        except Exception:
+            self.database_host = "localhost"
+            self.database_name = "supermarkt"
+            self.database_password = "AjaxDaan23@"
+            self.database_port = "5432"
 
         try:
             self.conn = psycopg2.connect(
@@ -93,7 +92,23 @@ class Database:
         self.conn.commit()
 
     # Functie om producten op te vragen
-    def get_products(self):
-        self.cur.execute("select * from product limit 1000;")
+    def get_products(self, categorie):
+        # Opvragen bij welk categoryID het product past
+        self.cur.execute("SELECT categoryId FROM categories WHERE categoryName = %s", (str(categorie).strip(),))
 
-        return self.cur.fetchall()
+        number = str(self.cur.fetchone()[0])
+
+        self.conn.commit()
+
+        self.cur.execute(f"SELECT * FROM product, category_{number} WHERE product.pid = category_{number}.pid")
+
+        product_info = []
+
+        for i in self.cur:
+            if any(char.isdigit() for char in str(i[5])):
+                if int("".join([ch for ch in str(i[5]) if ch.isdigit()])) == 0:
+                    pass
+                else:
+                    product_info.append({'pid': i[0], 'name': i[1], 'link': i[2], 'image': i[3], 'price': i[4], 'weight': i[5], 'energie': i[6], 'vet': i[7], 'koolhydraten': i[8], 'eiwitten': i[9], 'zout': i[10], 'voedingsvezel': i[11]})
+
+        return product_info

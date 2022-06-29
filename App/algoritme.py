@@ -13,25 +13,10 @@ class Knapsack:
         self.database = db.Database()
         self.products = ''
 
-    def get_products(self):
-        self.products = self.database.get_products()
+    def dynamic_min_max(self, values, weights, capacity):
 
-        product_info = []
-
-        for i in self.products:
-            if any(char.isdigit() for char in str(i[5])):
-                product_info.append({'pid': i[0], 'name': i[1], 'link': i[2], 'image': i[3], 'price': i[4], 'weight': i[5]})
-
-        return product_info
-
-    def dynamic_fruit(self, product_info, capacity):
-
-        value, weight = [], []
+        value, weight = values, weights
         capacity = capacity // 10
-
-        for i in product_info:
-            value.append(float(i['price']) * 100)
-            weight.append(round(int("".join([ch for ch in str(i['weight']) if ch.isdigit()])) / 10))
 
         n = len(value)
         matrix = [[0 for x in range(capacity + 1)] for x in range(n + 1)]
@@ -65,15 +50,73 @@ class Knapsack:
 
         return index
 
+    def aankomen(self, product_info):
+
+        values, weights = [], []
+        for i in product_info:
+            values.append(int(float(i['price']) * 10) / int("".join([ch for ch in str(i['weight']) if ch.isdigit()])))
+            weights.append(int("".join([ch for ch in str(i['eiwitten']) if ch.isdigit()])) * 10)
+
+        result_eiwitten = self.dynamic_min_max(values, weights, 1000)
+
+        values, weights = [], []
+        for i in product_info:
+            values.append(int(float(i['price']) * 10) / int("".join([ch for ch in str(i['weight']) if ch.isdigit()])))
+            weights.append(int("".join([ch for ch in str(i['vet']) if ch.isdigit()])) * 10)
+
+        result_vet = self.dynamic_min_max(values, weights, 1000)
+
+        values, weights = [], []
+        for i in product_info:
+            values.append(int(float(i['price']) * 10) / int("".join([ch for ch in str(i['weight']) if ch.isdigit()])))
+            weights.append((int("".join([ch for ch in str(i['vet']) if ch.isdigit()])) + int("".join([ch for ch in str(i['eiwitten']) if ch.isdigit()]))) * 10)
+
+        result_gemengd = self.dynamic_min_max(values, weights, 1000)
+
+        return list(set(result_eiwitten + result_vet + result_gemengd))
+
+    def normaal(self, product_info):
+
+        values, weights = [], []
+        for i in product_info:
+            values.append(int(float(i['price']) * 10))
+            weights.append(int("".join([ch for ch in str(i['weight']) if ch.isdigit()])) * 10)
+
+        return self.dynamic_min_max(values, weights, 1000)
+
+    def afvallen(self, product_info):
+
+        values, weights = [], []
+        for i in product_info:
+            values.append(int(float(i['price']) * 10))
+            weights.append(int("".join([ch for ch in str(i['koolhydraten']) if ch.isdigit()])) * 10)
+
+        return self.dynamic_min_max(values, weights, 1000)
+
     def main(self, massa, categorie, dieet):
-        product_info = self.get_products()
-
-        massa = int(massa)
-
+        products = []
         return_list = []
-        for i in self.dynamic_fruit(product_info, massa):
-            print(i)
-            return_list.append(product_info[i])
 
-        print(return_list)
+        product_info = self.database.get_products(categorie)
+
+        if 'afvallen' in str(dieet):
+            for i in product_info:
+                if int("".join([ch for ch in str(i['koolhydraten']) if ch.isdigit()])) != 0:
+                    products.append(i)
+
+            for j in self.afvallen(products):
+                return_list.append(products[j])
+
+        elif 'aankomen' in str(dieet):
+            for i in product_info:
+                if int("".join([ch for ch in str(i['eiwitten']) if ch.isdigit()])) != 0 or int("".join([ch for ch in str(i['vet']) if ch.isdigit()])) != 0:
+                    products.append(i)
+
+            for j in self.aankomen(products):
+                return_list.append(products[j])
+
+        else:
+            for j in self.normaal(product_info):
+                return_list.append(product_info[j])
+
         return return_list
