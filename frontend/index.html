@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
     <head>
     <meta charset="UTF-8">
-    <title>Responsive Registration Form | Daan van Dijk</title>
+    <title> Knapsack problem | Daan van Dijk</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
@@ -11,45 +11,37 @@
     </head>
 <body>
     <div class="container">
-        <div class="title">Ook zo'n trek?, maar geen zin om veel geld uit geven?</div>
+        <div class="title">Ook trek, maar geen zin om veel geld uit geven?</div>
 
         <form class="form" id="myForm" action="#">
-            <div class="user-details">
+            <div class="user-details" id="foo\bar">
 
                 <div class="input-box">
+                    <span class="details">Wat voor een dieet volg je?</span>
+                    <input id="dieet" type="text" placeholder="Dieet" required>
+                </div>
+
+<!--                <div class="input-box">
                     <span class="details">Hoeveel gram wil je kopen?</span>
                     <input id="gram" type="text" placeholder="Aantal gram" required>
-                </div>
+                </div>-->
 
                 <div class="input-box">
                     <span class="details">Uit welke categorie?</span>
 
-                    <div class="select-btn">
+                    <div class="select-btn" id="input-categorie">
                         <span>Selecteer Categorie</span>
                             <i class="uil uil-angle-down"></i>
                     </div>
                     <div class="content">
                     <ul class="options"></ul>
                     </div>
-
                 </div>
 
-                <div class="input-box">
-                    <span class="details">Dieet keuze?</span>
-
-                    <div class="select-btn" id="dieet">
-                        <span>Selecteer Dieet</span>
-                            <i class="uil uil-angle-down"></i>
-                    </div>
-                    <div class="content">
-                    <ul class="options"></ul>
-                    </div>
-                </div>
 
             </div>
-
-                <button type="submit" value="Bereken producten">Bereken producten</button>
         </form>
+        <button id="button-products" type="click" value="Bereken producten">Bereken producten</button>
     </div>
 
     <div id="storage" class="storage">

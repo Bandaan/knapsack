@@ -1,7 +1,10 @@
 const myForm = document.getElementById('myForm')
 const formGewicht = document.getElementById('gram')
-const formCategorie = document.getElementById('categorie')
+const formCategorie = document.getElementById('input-categorie')
 const formDieet = document.getElementById('dieet')
+
+const button = document.getElementById('button-products')
+
 
 
 function fetchData(weight, category, dieet) {
@@ -33,19 +36,19 @@ function fetchData(weight, category, dieet) {
     });
 }
 
-myForm.addEventListener('submit', (e) => {
+button.addEventListener('click', (e) => {
     e.preventDefault()
-    fetchData(formGewicht.value, 10, formDieet.value)
+    fetchData(1000, selectBtn.firstElementChild.innerText, formDieet.value)
 })
 
 
 
-const wrapper = document.querySelector(".user-details"),
+const wrapper = document.querySelector('#foo\\\\bar'),
 selectBtn = wrapper.querySelector(".select-btn"),
 searchInp = wrapper.querySelector("input"),
 options = wrapper.querySelector(".options");
 
-let categories = ["salades-pizza-maaltijden", "vlees-kip-vis-vega", "kaas-vleeswaren-tapas", "zuivel-plantaardig-en-eieren", "bakkerij-en-banket", "ontbijtgranen-en-beleg",
+let categories = ["aardappel-groente-fruit", "salades-pizza-maaltijden", "vlees-kip-vis-vega", "kaas-vleeswaren-tapas", "zuivel-plantaardig-en-eieren", "bakkerij-en-banket", "ontbijtgranen-en-beleg",
                             "snoep-koek-chips-en-chocolade", "tussendoortjes", "frisdrank-sappen-koffie-thee", "wijn-en-bubbels", "bier-en-aperitieven", "pasta-rijst-en-wereldkeuken", "soepen-sauzen-kruiden-olie",
                             "sport-en-dieetvoeding", "diepvries", "drogisterij", "baby-en-kind", "huishouden", "huisdier", "koken-tafelen-vrije-tijd"];
 
@@ -73,6 +76,6 @@ searchInp.addEventListener("keyup", () => {
         let isSelected = data == selectBtn.firstElementChild.innerText ? "selected" : "";
         return `<li onclick="updateName(this)" class="${isSelected}">${data}</li>`;
     }).join("");
-    options.innerHTML = arr ? arr : `<p style="margin-top: 10px;">Oops! Country not found</p>`;
+/*    options.innerHTML = arr ? arr : `<p style="margin-top: 10px;">Oops! Country not found</p>`;*/
 });
 selectBtn.addEventListener("click", () => wrapper.classList.toggle("active"));

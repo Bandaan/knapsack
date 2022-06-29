@@ -39,7 +39,7 @@ body{
 .container form .user-details{
   display: flex;
   justify-content: space-between;
-  margin: 12px 0 12;
+  margin: 12px 0 12px 0;
 }
 form .user-details .input-box{
   margin-bottom: 15px;
@@ -72,9 +72,12 @@ form {
   height: 45px;
   margin: 10px 0;
 }
-form button{
-  height: 80%;
+
+button{
+  margin-top: 15px;
+  height: 40px;
   width: 30%;
+  margin-right: 25px;
   color: white;
   border: none;
   font-size: 18px;
