@@ -41,9 +41,6 @@ class Product:
         # Voor elke error product pid de volledige product informatie krijgen
         await self.start_error_tasks()
 
-        # Producten in database zetten
-        await self.insert_in_database()
-
     # Functie om alle product pids te krijgen
     async def get_all_product_pids(self):
 
@@ -83,7 +80,7 @@ class Product:
                     proxy = 'None'
 
             # Proxy toevoegen aan task zodat je geen rate limit krijgt
-            self.tasks.append(asyncio.create_task(get_product_info(i['pid'], i['categorie'], proxy)))
+            self.tasks.append(asyncio.create_task(get_product_info(i['pid'], i['categorie'], proxy, self.database)))
             await asyncio.sleep(1)
             index += 1
 
@@ -98,24 +95,13 @@ class Product:
                 self.products.append(i.result()[0])
             else:
                 # Als product pid een error heeft dan aan error_tasks toevoegen
-                self.error_tasks.append(asyncio.create_task(get_product_info(i.result()[1]['pid'], i.result()[1]['categorie'])))
+                self.error_tasks.append(asyncio.create_task(get_product_info(i.result()[1]['pid'], i.result()[1]['categorie'], self.database)))
 
     # Functie om alle producten die een error gaven nog een keer te starten
     async def start_error_tasks(self):
 
         # Wachten tot alle tasks klaar zijn
         await asyncio.gather(*self.error_tasks)
-
-        # Error producten ook aan lijst toevoegen
-        for i in self.error_tasks:
-            self.products.append(i.result()[0])
-
-    # Functie om producten aan database toe te voegen
-    async def insert_in_database(self):
-        # Producten in database toevoegen
-        for product in self.products:
-            await self.database.insert_product(product)
-            await self.database.insert_categorie(product)
 
 
 if __name__ == "__main__":

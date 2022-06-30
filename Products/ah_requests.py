@@ -73,7 +73,7 @@ async def get_product_pids(categorie):
 
 
 # Functie om product informatie van een pid te krijgen
-async def get_product_info(pid, categorie, proxy):
+async def get_product_info(pid, categorie, proxy, database):
 
     # Dictionary aanmaken
     error_list = {}
@@ -212,6 +212,9 @@ async def get_product_info(pid, categorie, proxy):
         # Error teruggeven
         error_list = {'pid': pid, 'categorie': categorie}
         return product_info, error_list
+
+    await database.insert_product(product_info)
+    await database.insert_categorie(product_info)
 
     # Product informatie en eventuele error teruggeven
     return product_info, error_list
