@@ -44,7 +44,6 @@ class Knapsack:
                     # Kijken wat de kleinste prijs is bij het maximale gewicht
                     matrix[i][j] = min(matrix[i - 1][j], matrix[i - 1][j - weight[i - 1]] + value[i - 1])
 
-        print(matrix)
         res = matrix[n][capacity]
 
         w = capacity
